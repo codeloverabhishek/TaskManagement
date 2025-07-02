@@ -1,0 +1,26 @@
+trigger:
+- master
+- main
+- feature/*
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- checkout: self
+
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK'
+  inputs:
+    packageType: 'sdk'
+    version: '7.0.x'
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+
+- script: dotnet restore
+  displayName: 'Restore dependencies'
+
+- script: dotnet build --configuration Release --no-restore
+  displayName: 'Build project'
+
+- script: dotnet test --no-build --verbosity normal
+  displayName: 'Run tests'
